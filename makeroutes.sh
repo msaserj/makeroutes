@@ -25,6 +25,19 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
 
     # Получение только IP-адресов без всяких cdn
     ip_addresses=$(dig +short "$domain" | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}')
+    echo "$domain" $ip_addresses
+
+    # Бывает communications error, поэтому переделываем
+    if [[ $ip_addresses == *"communications error"* ]]; then
+        echo "############"
+        echo "communications error! for domain $domain"
+        echo "############"
+        sleep 2
+        echo "REPEAT :-)"
+        sleep 2
+        ip_addresses=$(dig +short "$domain" | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}')
+        echo "$domain" $ip_addresses
+    fi
 
     # Цикл по каждому IP-адресу
     while IFS= read -r ip_address || [[ -n "$ip_address" ]]; do
@@ -32,4 +45,3 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
         echo "route ADD $ip_address MASK 255.255.255.255 0.0.0.0" >> "$routes_file"
     done <<< "$ip_addresses"
 done < "$domains_file"
-

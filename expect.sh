@@ -7,7 +7,7 @@ set passwordFile "password.txt"
 # Чтение пароля из файла
 set password [exec cat $passwordFile]
 
-spawn ssh msa@192.168.2.1
+spawn ssh admin@192.168.2.1
 expect "password:"
 send "$password\r"
 

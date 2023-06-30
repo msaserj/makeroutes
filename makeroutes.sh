@@ -1,10 +1,15 @@
 #!/bin/bash
 
 # Имя файла с исходными доменами
+# создайте если его нет, в нём укажите доменные имена на каждой строчке
 domains_file="domains"
+# временные файлы
+tmp_bat="temp.bat"
+tmp_cli="temp.cli"
 
-# Имя файла для записи маршрутов
-routes_file="routes.bat"
+# Имя файла для записи маршрутов через web-интерфейс роутера и cli командной строки скриптом expect.sh
+routes_bat="temp.bat"
+routes_cli="temp.cli"
 
 # Проверка существования файла с доменами
 if [ ! -f "$domains_file" ]; then
@@ -12,8 +17,9 @@ if [ ! -f "$domains_file" ]; then
     exit 1
 fi
 
-# Очистка файла с маршрутами (если существует)
-> "$routes_file"
+# Очистка файлов с маршрутами (если существует)
+> "$routes_bat"
+> "$routes_cli"
 
 # Цикл по каждой строке в файле с доменами
 while IFS= read -r domain || [[ -n "$domain" ]]; do
@@ -32,9 +38,9 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
         echo "############"
         echo "communications error! for domain $domain"
         echo "############"
-        sleep 2
+        sleep 1
         echo "REPEAT :-)"
-        sleep 2
+        sleep 1
         ip_addresses=$(dig +short "$domain" | grep -E '([0-9]{1,3}\.){3}[0-9]{1,3}')
         echo "$domain" $ip_addresses
     fi
@@ -42,6 +48,22 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
     # Цикл по каждому IP-адресу
     while IFS= read -r ip_address || [[ -n "$ip_address" ]]; do
         # Запись статического маршрута в файл
-        echo "route ADD $ip_address MASK 255.255.255.255 0.0.0.0" >> "$routes_file"
+        # ip route 199.199.199.2 255.255.255.255 0.0.0.0 Wireguard0 auto
+        echo "route ADD $ip_address MASK 255.255.255.255 0.0.0.0" >> "$tmp_bat"
+        echo "ip route $ip_address 255.255.255.255 0.0.0.0 Wireguard0 auto !script_address" >> "$tmp_cli"
     done <<< "$ip_addresses"
 done < "$domains_file"
+
+echo "############"
+echo "DEL DUPLICATES"
+echo "############"
+sleep 1
+
+sort "$tmp_bat" | uniq > "routes.bat"
+sort "$tmp_cli" | uniq > "routes.cli"
+
+rm temp.cli
+rm temp.bat
+
+echo "#### OK! ####"
+sleep 2

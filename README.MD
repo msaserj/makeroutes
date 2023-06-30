@@ -23,8 +23,8 @@ domain5.site
 3. This script will generate two files `routes.bat` `routes.cli`.
 4. Clear routes in you keenetic router.
 5. You can import routes from `routes.bat` to your router with web-interface.
-6. Also you can import routes using `expect.sh`. You must turn on SSH-server on you keenetic router.
-7. Create file `password.txt` with your password for keenetic router
+6. Also, you can import routes using `expect.sh`. You must turn on SSH-server on you keenetic router.
+7. Create file `password.txt` with your password for keenetic router.
 8. Run `expect.sh`:
 ```
 ./expect.sh

@@ -1,8 +1,8 @@
 
-### sh script to create routing list
+## sh script to create routing lists
 #### for keenetic routers
 
-NOTE: only for linux env
+#### NOTE: only for linux env
 
 1. Create new file `domain` and put there domain names like:
 ``` 

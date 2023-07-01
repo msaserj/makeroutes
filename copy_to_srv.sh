@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Destination server details
-destination_server="root@msaserj.ru"
+destination_server="msaserj"
 destination_directory="/home/msa/makeroutes/"
 
 # List of files to exclude

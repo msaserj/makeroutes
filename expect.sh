@@ -1,6 +1,6 @@
 #!/usr/bin/expect
 
-set file [open "routes.cli" r]
+set file [open routes*.cli r]
 
 set passwordFile "password.txt"
 

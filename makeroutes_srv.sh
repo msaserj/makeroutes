@@ -1,16 +1,22 @@
 #!/bin/bash
 
+cd /home/msa/makeroutes/
+
+# Get current date and time
+timestamp=$(date +%Y%m%d_%H%M)
+
 # Name of the file with domain names
 # Create it if it doesn't exist, and specify one domain name per line
 domains_file="domains"
-
 # Temporary files
 tmp_bat="temp.bat"
 tmp_cli="temp.cli"
 
+mkdir "/home/msa/config/$timestamp/"
+
 # File names for writing routes using web-interface and cli commands with expect.sh script
-routes_bat="routes.bat"
-routes_cli="routes.cli"
+routes_bat="/home/msa/config/$timestamp/routes.bat"
+routes_cli="/home/msa/config/$timestamp/routes.cli"
 
 # Check if the domains file exists
 if [ ! -f "$domains_file" ]; then
@@ -48,6 +54,7 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
 
     # Loop through each IP address
     while IFS= read -r ip_address || [[ -n "$ip_address" ]]; do
+
         # Write static route to the file
         echo "route ADD $ip_address MASK 255.255.255.255 0.0.0.0" >> "$tmp_bat"
         echo "ip route $ip_address 255.255.255.255 0.0.0.0 Wireguard0 auto !script_address" >> "$tmp_cli"
@@ -61,9 +68,6 @@ sleep 1
 
 sort "$tmp_bat" | uniq > "$routes_bat"
 sort "$tmp_cli" | uniq > "$routes_cli"
-
-echo copy domains file to remote srv
-scp $domains_file "root@msaserj.ru:/home/msa/makeroutes/"
 
 rm temp.cli
 rm temp.bat

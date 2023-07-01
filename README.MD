@@ -29,3 +29,5 @@ domain5.site
 ```
 ./expect.sh
 ```
+
+Note: `makeroutes_srv.sh`, `copy_to_srv.sh`, `clearfolder.sh` my helper scripts.

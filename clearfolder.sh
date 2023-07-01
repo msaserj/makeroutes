@@ -26,7 +26,7 @@ for dir in "$folder"/*; do
         time_diff=$((current_time - last_modified))
 
         # Check if the folder is older than 7 days (604,800 seconds)
-        if [ "$time_diff" -gt 600 ]; then
+        if [ "$time_diff" -gt 604800 ]; then
             echo "Deleting folder: $dir"
             rm -rf "$dir"
         fi
